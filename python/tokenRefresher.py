@@ -46,7 +46,7 @@ sp_oauth = SpotifyOAuth(
     client_id=CLIENT_ID,
     client_secret=CLIENT_SECRET,
     redirect_uri=REDIRECT_URI,
-    scope="user-read-currently-playing user-modify-playback-state user-read-playback-state",
+    scope="user-read-currently-playing user-modify-playback-state",
     cache_path=CACHE_PATH
 )
 
@@ -90,7 +90,7 @@ def refresh_and_keepalive():
 
                     # Keep-alive: Send a simple API request
                     logger.info("Sending keep-alive request to Spotify API...")
-                    current_playback = sp.current_playback()
+                    current_playback = sp.currently_playing(additional_types="episode")
                     if current_playback:
                         logger.info("Spotify playback detected.")
                     else:
