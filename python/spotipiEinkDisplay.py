@@ -51,15 +51,18 @@ class SpotipiEinkDisplay:
         # ---------------------------------------------------------------------
         # Logging
         # ---------------------------------------------------------------------
+        log_path = self.config.get('DEFAULT', 'spotipy_log')
+        os.makedirs(os.path.dirname(log_path), exist_ok=True)
+
         logging.basicConfig(
             format='%(asctime)s %(message)s',
             datefmt='%Y-%m-%d %H:%M:%S',
-            filename=self.config.get('DEFAULT', 'spotipy_log'),
+            filename=log_path,
             level=logging.INFO
         )
         logger = logging.getLogger('spotipy_logger')
         handler = RotatingFileHandler(
-            self.config.get('DEFAULT', 'spotipy_log'),
+            log_path,
             maxBytes=2000,
             backupCount=3
         )
