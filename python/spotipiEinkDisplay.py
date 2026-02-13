@@ -130,14 +130,17 @@ class SpotipiEinkDisplay:
           - Otherwise cycles through the list in order.
         """
         if not self.idle_images:
-            return Image.open(self.default_idle_image).copy()
+            with Image.open(self.default_idle_image) as im:
+                return im.copy()
 
         if self.idle_shuffle:
-            return Image.open(random.choice(self.idle_images)).copy()
+            with Image.open(random.choice(self.idle_images)) as im:
+                return im.copy()
         else:
             img_path = self.idle_images[self.idle_index]
             self.idle_index = (self.idle_index + 1) % len(self.idle_images)
-            return Image.open(img_path).copy()
+            with Image.open(img_path) as im:
+                return im.copy()
 
     def _break_fix(self, text: str, width: int, font: ImageFont, draw: ImageDraw):
         """
@@ -395,8 +398,11 @@ class SpotipiEinkDisplay:
             try:
                 resp = requests.get(song_request[1], stream=True)
                 resp.raise_for_status()
-                cover = Image.open(resp.raw).copy()
-                resp.close()
+                try:
+                    with Image.open(resp.raw) as im:
+                        cover = im.copy()
+                finally:
+                    resp.close()
 
                 # show_small_cover=True for active track
                 image = self._gen_pic(
@@ -409,7 +415,8 @@ class SpotipiEinkDisplay:
                 self.logger.error(f"Failed to fetch/open album cover: {e}")
                 self.logger.error(traceback.format_exc())
 
-                fallback_cover = Image.open(self.default_idle_image).copy()
+                with Image.open(self.default_idle_image) as im:
+                    fallback_cover = im.copy()
                 image = self._gen_pic(
                     fallback_cover,
                     artist=song_request[2],
