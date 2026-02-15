@@ -82,6 +82,7 @@ class SpotipiEinkDisplay:
             from inky.inky_uc8159 import CLEAN
             self.inky_auto = auto
             self.inky_clean = CLEAN
+            self.inky = self.inky_auto()
             self.logger.info('Loading Pimoroni Inky library')
         elif self.config.get('DEFAULT', 'model') == 'waveshare4':
             from lib import epd4in01f
@@ -218,7 +219,7 @@ class SpotipiEinkDisplay:
         """
         try:
             if self.config.get('DEFAULT', 'model') == 'inky':
-                inky = self.inky_auto()
+                inky = self.inky
                 for _ in range(2):
                     for y in range(inky.height):
                         for x in range(inky.width):
@@ -261,7 +262,7 @@ class SpotipiEinkDisplay:
         """
         try:
             if self.config.get('DEFAULT', 'model') == 'inky':
-                inky = self.inky_auto()
+                inky = self.inky
                 inky.set_image(image, saturation=saturation)
                 inky.show()
             elif self.config.get('DEFAULT', 'model') == 'waveshare4':
